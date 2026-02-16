@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BorrowHub - Community Sharing Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --secondary: #F7931E;
+            --accent: #4ECDC4;
+            --dark: #2C3E50;
+            --light: #FFF8F0;
+            --cream: #FFF5E6;
+            --shadow: rgba(255, 107, 53, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Decorative background elements */
+        .bg-decoration {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .blob1 {
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            opacity: 0.2;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .blob2 {
+            bottom: -150px;
+            left: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+            opacity: 0.15;
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            animation: float 25s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(5deg); }
+            66% { transform: translate(-20px, 20px) rotate(-5deg); }
+        }
+
+        /* Header */
+        header {
+            position: relative;
+            z-index: 10;
+            background: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .logo {
+            font-family: 'Caveat', cursive;
+            font-size: 2.5rem;
+            color: var(--primary);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--dark);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-btn:hover::after {
+            width: 100%;
+        }
+
+        .cta-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow);
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .filter-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 0.75rem;
+            border: 2px solid #E8E8E8;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+        }
+
+        /* Products Grid */
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .products-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .view-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .view-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+
+        /* Product Card */
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background: linear-gradient(135deg, var(--cream), var(--light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-category {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-owner {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .owner-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .product-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 2px solid var(--light);
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .product-price span {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .borrow-btn {
+            background: linear-gradient(135deg, var(--accent), #45B7AA);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .borrow-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--dark);
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2px solid #E8E8E8;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-text {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2rem;
+            }
+
+            .nav-items {
+                gap: 1rem;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .filters {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-decoration blob1"></div>
+    <div class="bg-decoration blob2"></div>
+
+    <header>
+        <div class="logo">BorrowHub</div>
+        <div class="nav-items">
+            <button class="nav-btn" onclick="showSection('browse')">Browse</button>
+            <button class="nav-btn" onclick="showSection('myitems')">My Items</button>
+            <button class="cta-btn" onclick="openModal('list')">List an Item</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-number" id="totalItems">0</div>
+                <div class="stat-label">Items Available</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeUsers">0</div>
+                <div class="stat-label">Community Members</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalBorrows">0</div>
+                <div class="stat-label">Items Borrowed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avgRating">⭐ 4.8</div>
+                <div class="stat-label">Average Rating</div>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-title">Find What You Need</div>
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="searchInput">Search</label>
+                    <input type="text" id="searchInput" placeholder="Search items..." oninput="filterProducts()">
+                </div>
+                <div class="filter-group">
+                    <label for="categoryFilter">Category</label>
+                    <select id="categoryFilter" onchange="filterProducts()">
+                        <option value="">All Categories</option>
+                        <option value="tools">Tools</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="sports">Sports</option>
+                        <option value="books">Books</option>
+                        <option value="home">Home & Garden</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="maxPrice">Max Price (per day)</label>
+                    <input type="number" id="maxPrice" placeholder="Any price" oninput="filterProducts()">
+                </div>
+            </div>
+        </div>
+
+        <div class="products-header">
+            <h2 class="products-title">Available Items</h2>
+            <div class="view-toggle">
+                <button class="view-btn active">Grid</button>
+                <button class="view-btn">List</button>
+            </div>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            <!-- Products will be dynamically inserted here -->
+        </div>
+
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">📦</div>
+            <div class="empty-title">No items found</div>
+            <div class="empty-text">Try adjusting your filters or be the first to list an item!</div>
+        </div>
+    </div>
+
+    <!-- List Item Modal -->
+    <div class="modal" id="listModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('list')">&times;</button>
+            <h2 class="modal-title">List Your Item</h2>
+            <form onsubmit="addProduct(event)">
+                <div class="form-group">
+                    <label for="itemName">Item Name *</label>
+                    <input type="text" id="itemName" required>
+                </div>
+                <div class="form-group">
+                    <label for="itemCategory">Category *</label>
+                    <select id="itemCategory" required>
+                        <option value="">Select category</option>
+                        <option value="tools">Tools</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="sports">Sports</option>
+                        <option value="books">Books</option>
+                        <option value="home">Home & Garden</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="itemPrice">Price per Day ($) *</label>
+                    <input type="number" id="itemPrice" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="itemDescription">Description</label>
+                    <textarea id="itemDescription" placeholder="Tell borrowers about your item..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="ownerName">Your Name *</label>
+                    <input type="text" id="ownerName" required>
+                </div>
+                <button type="submit" class="submit-btn">List Item</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Borrow Modal -->
+    <div class="modal" id="borrowModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('borrow')">&times;</button>
+            <h2 class="modal-title">Borrow Item</h2>
+            <div id="borrowItemDetails"></div>
+            <form onsubmit="confirmBorrow(event)">
+                <div class="form-group">
+                    <label for="borrowerName">Your Name *</label>
+                    <input type="text" id="borrowerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="borrowDays">Number of Days *</label>
+                    <input type="number" id="borrowDays" min="1" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="borrowMessage">Message to Owner</label>
+                    <textarea id="borrowMessage" placeholder="Let them know when you'll pick it up..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Request to Borrow</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample data with emojis as placeholders
+        const sampleProducts = [
+            {
+                id: 1,
+                name: "Power Drill Set",
+                category: "tools",
+                price: 5,
+                owner: "Mike Johnson",
+                icon: "🔨",
+                available: true,
+                description: "Professional grade power drill with multiple bits"
+            },
+            {
+                id: 2,
+                name: "Mountain Bike",
+                category: "sports",
+                price: 15,
+                owner: "Sarah Chen",
+                icon: "🚴",
+                available: true,
+                description: "21-speed mountain bike, perfect for trails"
+            },
+            {
+                id: 3,
+                name: "DSLR Camera",
+                category: "electronics",
+                price: 25,
+                owner: "Alex Rivera",
+                icon: "📷",
+                available: true,
+                description: "Canon EOS with lens kit"
+            },
+            {
+                id: 4,
+                name: "Camping Tent",
+                category: "sports",
+                price: 12,
+                owner: "Emma Watson",
+                icon: "⛺",
+                available: true,
+                description: "4-person tent with rain cover"
+            },
+            {
+                id: 5,
+                name: "Lawn Mower",
+                category: "home",
+                price: 10,
+                owner: "David Park",
+                icon: "🌿",
+                available: true,
+                description: "Gas-powered, well-maintained"
+            },
+            {
+                id: 6,
+                name: "Projector",
+                category: "electronics",
+                price: 20,
+                owner: "Lisa Kumar",
+                icon: "📽️",
+                available: true,
+                description: "HD projector with HDMI, great for movies"
+            }
+        ];
+
+        let products = [...sampleProducts];
+        let currentBorrowItem = null;
+
+        // Initialize app
+        function init() {
+            renderProducts();
+            updateStats();
+        }
+
+        // Render products
+        function renderProducts(filteredProducts = products) {
+            const grid = document.getElementById('productsGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (filteredProducts.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            grid.innerHTML = filteredProducts.map(product => `
+                <div class="product-card" onclick="openBorrowModal(${product.id})">
+                    <div class="product-image">
+                        ${product.icon}
+                        ${product.available ? '<div class="product-badge">Available</div>' : '<div class="product-badge" style="background: #999;">Borrowed</div>'}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">${product.category}</div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-owner">
+                            <div class="owner-avatar">${product.owner.charAt(0)}</div>
+                            <span>${product.owner}</span>
+                        </div>
+                        <div class="product-details">
+                            <div class="product-price">$${product.price}<span>/day</span></div>
+                            <button class="borrow-btn" onclick="event.stopPropagation(); openBorrowModal(${product.id})">
+                                Borrow
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter products
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+
+            let filtered = products.filter(product => {
+                const matchesSearch = product.name.toLowerCase().includes(searchTerm) || 
+                                    product.owner.toLowerCase().includes(searchTerm);
+                const matchesCategory = !category || product.category === category;
+                const matchesPrice = !maxPrice || product.price <= parseFloat(maxPrice);
+                
+                return matchesSearch && matchesCategory && matchesPrice;
+            });
+
+            renderProducts(filtered);
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('totalItems').textContent = products.length;
+            document.getElementById('activeUsers').textContent = new Set(products.map(p => p.owner)).size;
+            document.getElementById('totalBorrows').textContent = Math.floor(products.length * 0.6);
+        }
+
+        // Modal functions
+        function openModal(type) {
+            document.getElementById(type + 'Modal').classList.add('active');
+        }
+
+        function closeModal(type) {
+            document.getElementById(type + 'Modal').classList.remove('active');
+        }
+
+        // Add product
+        function addProduct(event) {
+            event.preventDefault();
+            
+            const icons = ['🎯', '🎨', '🎸', '🎮', '📚', '🏀', '⚽', '🎾', '🏐', '🎿'];
+            const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+            
+            const newProduct = {
+                id: products.length + 1,
+                name: document.getElementById('itemName').value,
+                category: document.getElementById('itemCategory').value,
+                price: parseFloat(document.getElementById('itemPrice').value),
+                owner: document.getElementById('ownerName').value,
+                icon: randomIcon,
+                available: true,
+                description: document.getElementById('itemDescription').value
+            };
+
+            products.push(newProduct);
+            renderProducts();
+            updateStats();
+            closeModal('list');
+            
+            // Reset form
+            event.target.reset();
+            
+            // Show success message
+            alert('✅ Your item has been listed successfully!');
+        }
+
+        // Open borrow modal
+        function openBorrowModal(productId) {
+            currentBorrowItem = products.find(p => p.id === productId);
+            const details = document.getElementById('borrowItemDetails');
+            
+            details.innerHTML = `
+                <div style="background: var(--light); padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem;">
+                    <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">${currentBorrowItem.icon}</div>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">${currentBorrowItem.name}</h3>
+                    <p style="color: #666; margin-bottom: 1rem;">${currentBorrowItem.description || 'No description provided'}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--primary); font-weight: 700; font-size: 1.3rem;">$${currentBorrowItem.price}/day</span>
+                        <span style="color: #666;">Owner: ${currentBorrowItem.owner}</span>
+                    </div>
+                </div>
+            `;
+            
+            openModal('borrow');
+        }
+
+        // Confirm borrow
+        function confirmBorrow(event) {
+            event.preventDefault();
+            
+            const days = document.getElementById('borrowDays').value;
+            const total = (currentBorrowItem.price * days).toFixed(2);
+            
+            alert(`🎉 Borrow request sent!\n\nItem: ${currentBorrowItem.name}\nDays: ${days}\nTotal: $${total}\n\nThe owner will contact you soon!`);
+            
+            closeModal('borrow');
+            event.target.reset();
+        }
+
+        // Initialize on load
+        window.onload = init;
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
